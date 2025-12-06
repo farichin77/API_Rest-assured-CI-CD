@@ -1,4 +1,4 @@
-name: CI/CD API Automation
+name: CI_API_Automation
 
 on:
   push:
@@ -26,11 +26,8 @@ jobs:
       - name: Build project
         run: ./gradlew build
 
-      - name: Run tests
-        run: ./gradlew test
-
       - name: Upload ExtentReports
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: API-Test-Report
           path: reports/AutomationReport.html
