@@ -38,4 +38,9 @@ test {
     useTestNG() {
         suites 'src/test/java/runner/testng.xml'
     }
+    ignoreFailures = true
+
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }

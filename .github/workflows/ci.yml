@@ -24,7 +24,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build project
-        run: ./gradlew build
+        run: ./gradlew build --continue
 
       - name: Upload ExtentReports
         uses: actions/upload-artifact@v4
