@@ -2,7 +2,7 @@
 
 ## 1. Overview
 - **Project**: API automation testing for Sport Reservation API.
-- **Tech stack**: Java, Gradle, Rest Assured 5.5.6, TestNG 7.11.0, Hamcrest 2.2, Jackson Databind 2.18.0.
+- **Tech stack**: Java, Gradle, Rest Assured 5.5.6, TestNG 7.11.0, Hamcrest 2.2, Jackson Databind 2.18.0, ExtentReports 4.1.7.
 - **Config**: `src/resources/config.properties` with `baseUrl`, `email`, `password`.
 - **Runner**: TestNG via `testng.xml` (configured in `build.gradle` test task).
 
@@ -15,6 +15,7 @@
 - **In scope**:
   - Auth: login endpoint using credentials from config.
   - Sport Category: Create, Update, Get, Delete endpoints.
+  - Sport Activity: Create, Update, Get, Delete endpoints.
   - Positive and key negative tests at API level.
 - **Out of scope** (for now):
   - Performance/load, security penetration tests.
@@ -26,6 +27,9 @@
 - `POST /sport-categories` (create), `PUT /sport-categories/{id}` (update),
   `GET /sport-categories`/`{id}` (retrieve), `DELETE /sport-categories/{id}` (delete)
   (from `tests.sportCategory.*`).
+- `POST /sport-activities` (create), `PUT /sport-activities/{id}` (update),
+  `GET /sport-activities`/`{id}` (retrieve), `DELETE /sport-activities/{id}` (delete)
+  (from `tests.sportActivity.*`).
 
 ## 5. Test Approach & Strategy
 - **Framework**: Rest Assured for HTTP interactions; TestNG for structure, lifecycle, and assertions.
@@ -36,11 +40,9 @@
   - Response payload fields using Hamcrest matchers.
   - Business rules (e.g., name required, unique constraints if applicable).
 - **TestNG suite**: `src/test/java/runner/testng.xml` defines execution order:
-  1) Login
-  2) Create Sport Category
-  3) Update Sport Category
-  4) Get Sport Category
-  5) Delete Sport Category
+  1) Auth Tests (Login)
+  2) Sport Category Tests (Create → Update → Get by Id → Delete)
+  3) Sport Activity Tests (Create → Update → Get by Id → Delete)
 - **Idempotency**: Tests create and clean up entities within the run where applicable (delete after create).
 
 ## 6. Test Levels & Types
@@ -79,10 +81,11 @@
 ## 11. Tools
 - **Build**: Gradle (`gradlew test`).
 - **Test runner**: TestNG (`testng.xml`).
-- **Libraries**: Rest Assured, Hamcrest, Jackson.
+- **Libraries**: Rest Assured, Hamcrest, Jackson, ExtentReports.
 
 ## 12. Reporting & Metrics
 - **Default reports**: Gradle/TestNG reports in `build/test-results/test` and `build/reports/tests/test`.
+- **HTML report (ExtentReports)**: `reports/AutomationReport.html`.
 - **Key metrics**: Pass rate, failure rate by suite/class, time per test, flaky test tracking.
 
 ## 13. Test Execution
@@ -109,6 +112,14 @@
   - Get by id existing → 200; matches created.
   - Get by id non-existing → 404.
   - Delete existing → 200/204; subsequent GET → 404.
+ - **Sport Activity**
+   - Create valid payload → 201; id returned; retrievable via GET.
+   - Create with invalid/missing fields → 400.
+   - Update existing with valid payload → 200; fields updated.
+   - Update non-existing id → 404.
+   - Get by id existing → 200; content matches.
+   - Get by id non-existing → 404.
+   - Delete existing → 200/204; subsequent GET → 404.
 
 ## 16. Roles & Responsibilities
 - **QA Engineer**: Maintain tests, expand coverage, review failures, triage defects.

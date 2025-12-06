@@ -1,6 +1,6 @@
 # Assigment-Day33-ApiRestAssured
 
-API automation testing project using Java, Gradle, Rest Assured, and TestNG.
+API automation testing project using Java, Gradle, Rest Assured, and TestNG for Auth, Sport Category, and Sport Activity APIs. HTML reporting via ExtentReports.
 
 ## Requirements
 - Java 11+ (JDK)
@@ -13,6 +13,7 @@ API automation testing project using Java, Gradle, Rest Assured, and TestNG.
 - Hamcrest 2.2
 - Jackson Databind 2.18.0
 - Apache POI 5.2.3 (if needed for Excel-based data)
+- ExtentReports 4.1.7 (HTML report)
 
 ## Project Structure
 ```
@@ -21,16 +22,20 @@ src/
     body/
       auth/              # Request bodies for Auth
       sportCategory/     # Request bodies for Sport Category
+      sportActivity/     # Request bodies for Sport Activity
     utils/               # Config reader, common utilities
   resources/
     config.properties    # baseUrl, email, password (consider env vars in CI)
   test/java/
-    base/                # BaseTest (sets RestAssured.baseURI)
+    base/                # BaseTest (sets RestAssured.baseURI, init ExtentReports)
     runner/
       testng.xml         # TestNG suite
     tests/
       auth/              # Login tests
       sportCategory/     # CRUD tests for sport categories
+      sportActivity/     # CRUD tests for sport activities
+reports/
+  AutomationReport.html  # ExtentReports HTML output
 ```
 
 ## Configuration
@@ -41,12 +46,19 @@ src/
 
 ## How to Run
 - Windows:
-  ```bash
-  ./gradlew clean test
+```bash
+gradlew.bat clean test
+```
+
+- Linux/Mac:
+```bash
+./gradlew clean test
+```
 
 ## Reports
 - Results: `build/test-results/test`
 - HTML report: `build/reports/tests/test/index.html`
+- ExtentReports: `reports/AutomationReport.html`
 
 
 

@@ -1,5 +1,6 @@
 package tests.sportCategory;
 
+import base.BaseTest;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.Assert;
@@ -13,7 +14,7 @@ import java.io.FileWriter;
 import java.util.List;
 import java.util.Map;
 
-public class GetSportCategoryByIdTest {
+public class GetSportCategoryByIdTest extends BaseTest {
 
     private String token;
     private String categoryId;
@@ -35,11 +36,11 @@ public class GetSportCategoryByIdTest {
         reader2.close();
     }
 
-    @Test
+    @Test(priority = 1)
     public void getSportCategoryByIdFromList() throws Exception {
 
         String endpoint = "/sport-categories";
-        System.out.println("TC 04 - Get Sport Category By ID from List");
+        System.out.println("TC-get-01 Get Sport Category By ID from List");
         System.out.println("Endpoint: " + endpoint);
         System.out.println("Query Params: is_paginate=false");
         System.out.println(" ");
@@ -92,6 +93,55 @@ public class GetSportCategoryByIdTest {
         System.out.println("Full category list saved to all_sport_categories.json");
         System.out.println("\n");
     }
+    @Test(priority = 2)
+    public void getSportCategoryByIdFromListInvalid() throws Exception {
+
+        String invalidId = "999999";
+        String endpoint = "/sport-categories";
+
+        System.out.println("TC-get-02 Get Sport Category By ID from List (Invalid)");
+        System.out.println("Endpoint: " + endpoint);
+        System.out.println("Query Params: is_paginate=false");
+        System.out.println("Mencari ID: " + invalidId);
+        System.out.println(" ");
+
+        Response response = RestAssured.given()
+                .header("Authorization", "Bearer " + token)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .queryParam("is_paginate", false)
+                .when()
+                .get(endpoint)
+                .then()
+                .extract().response();
+
+        // validasi status selalu 200 karena GET list bukan detail
+        Assert.assertEquals(response.getStatusCode(), 200, "Status code tidak 200");
+        System.out.println("Status code: 200 OK");
+
+        // Validasi error field
+        boolean error = response.jsonPath().getBoolean("error");
+        Assert.assertFalse(error, "Error field seharusnya false");
+        System.out.println("Error field: " + error);
+
+        // ambil list
+        List<Map<String, Object>> resultList = response.jsonPath().getList("result");
+        Assert.assertNotNull(resultList, "Result list seharusnya tidak null");
+        System.out.println("Total categories: " + resultList.size());
+
+        // cari id yg tidak ada
+        Map<String, Object> category = resultList.stream()
+                .filter(r -> r.get("id").toString().equals(invalidId))
+                .findFirst()
+                .orElse(null);
+
+        // expect: null
+        Assert.assertNull(category, "Seharusnya ID " + invalidId + " tidak ditemukan!");
+        System.out.println("Category ID " + invalidId + " tidak ditemukan di list (expected).");
+
+        System.out.println("\n");
+    }
+
 }
 
 

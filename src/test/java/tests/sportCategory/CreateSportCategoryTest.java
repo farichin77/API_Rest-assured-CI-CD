@@ -1,5 +1,6 @@
 package tests.sportCategory;
 
+import base.BaseTest;
 import body.sportCategory.CreateSportCategoryBody;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -13,7 +14,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class CreateSportCategoryTest {
+public class CreateSportCategoryTest extends BaseTest {
 
     private String token;
 
@@ -39,7 +40,7 @@ public class CreateSportCategoryTest {
         String requestBody = categoryBody.getBody("Sepakbola").toString();
 
         // tampilkan request body
-        System.out.println("TC 02 - Create Sport Category Valid");
+        System.out.println("TC-Create-01  Create Sport Category Valid");
         System.out.println("Endpoint: /sport-categories/create");
         System.out.println(requestBody);
 
@@ -89,6 +90,75 @@ public class CreateSportCategoryTest {
         }
         System.out.println("Category ID berhasil disimpan ke file JSON");
         System.out.println("\n");
+    }
+    @Test(priority = 2)
+    public void createSportCategory_EmptyName() throws IOException {
+
+        RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
+
+        JSONObject body = new JSONObject();
+        body.put("name", "");
+
+        System.out.println("TC-Create-02  Create Sport Category with EMPTY name");
+        System.out.println("Endpoint: /sport-categories/create");
+        System.out.println(body.toString(4));
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("Authorization", "Bearer " + token)
+                .body(body.toString())
+                .post("/sport-categories/create");
+
+        System.out.println("==== Response ====");
+        System.out.println("Status: " + response.getStatusCode());
+        printResponse(response);
+
+        // Expected error dari backend
+        Assert.assertEquals(response.getStatusCode(), 406);
+        Assert.assertEquals(response.jsonPath().getString("message"), "The name field is required.");
+
+        System.out.println("PASSED\n");
+    }
+
+
+    @Test(priority = 3)
+    public void createSportCategory_NoAuth() throws IOException {
+
+        RestAssured.baseURI = ConfigReader.getProperty("baseUrl");
+
+        JSONObject body = new JSONObject();
+        body.put("name", "Basket"); // valid name tapi tanpa token
+
+        System.out.println("TC-Create-03 Create Sport Category WITHOUT token");
+        System.out.println("Endpoint: /sport-categories/create");
+        System.out.println(body.toString(4));
+
+        Response response = RestAssured.given()
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                // sengaja TIDAK menambahkan Authorization
+                .body(body.toString())
+                .post("/sport-categories/create");
+
+        System.out.println("==== Response ====");
+        System.out.println("Status: " + response.getStatusCode());
+        printResponse(response);
+
+        Assert.assertEquals(response.getStatusCode(), 401);
+        Assert.assertEquals(response.jsonPath().getString("message"), "Unauthenticated.");
+
+        System.out.println("\n");
+    }
+
+// Helper
+    private void printResponse(Response response) {
+        try {
+            JSONObject json = new JSONObject(response.asString());
+            System.out.println("Body:\n" + json.toString(4));
+        } catch (Exception e) {
+            System.out.println("Body (raw): " + response.asString());
+        }
     }
 
 }

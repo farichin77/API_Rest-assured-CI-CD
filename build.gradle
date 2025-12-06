@@ -10,15 +10,28 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured/5.5.6
+
+    // RestAssured
     testImplementation 'io.rest-assured:rest-assured:5.5.6'
-    //https://mvnrepository.com/artifact/org.testng/testng/7.11.0
+
+    // TestNG
     testImplementation 'org.testng:testng:7.11.0'
+
+    // JSON
     implementation 'org.json:json:20230227'
+
+    // Apache POI
     implementation 'org.apache.poi:poi:5.2.3'
     implementation 'org.apache.poi:poi-ooxml:5.2.3'
+
+    // Hamcrest
     testImplementation 'org.hamcrest:hamcrest:2.2'
+
+    // Jackson
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.18.0'
+
+    // ExtentReports 4 (HTML reporter)
+    implementation 'com.aventstack:extentreports:4.1.7'
 }
 
 test {
