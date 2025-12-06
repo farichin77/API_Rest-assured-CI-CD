@@ -1,5 +1,7 @@
 # Assigment-Day33-ApiRestAssured
 
+[![CI](https://github.com/OWNER/REPO/actions/workflows/ci.yml/badge.svg)](https://github.com/OWNER/REPO/actions/workflows/ci.yml)
+
 API automation testing project using Java, Gradle, Rest Assured, and TestNG for Auth, Sport Category, and Sport Activity APIs. HTML reporting via ExtentReports.
 
 ## Requirements
@@ -60,6 +62,23 @@ gradlew.bat clean test
 - HTML report: `build/reports/tests/test/index.html`
 - ExtentReports: `reports/AutomationReport.html`
 
+## CI/CD (GitHub Actions)
+- Workflow file: `.github/workflows/ci.yml` (update if you used a different filename)
+- Triggers: on `push` and `pull_request` to `main`
+- JDK: Temurin 11
+- Cache: Gradle caches enabled for faster builds
+- Commands executed:
+  - Windows: `gradlew.bat clean test`
+  - Linux/Mac: `./gradlew clean test`
+- Artifacts published per run:
+  - `build/test-results/test`
+  - `build/reports/tests/test`
+  - `reports/AutomationReport.html`
+- Secrets (optional, recommended for CI): set in Settings → Secrets and variables → Actions
+  - `BASE_URL`, `EMAIL`, `PASSWORD` (the `ConfigReader` should read env first, then fallback to `src/resources/config.properties`)
+- Viewing results: GitHub → Actions → select a run → Summary and download artifacts
+- Skip CI: include `[skip ci]` in the commit message
 
+Tip: Update the badge link at the top by replacing `OWNER/REPO` with your GitHub namespace and repository name.
 
 See also: `TEST_PLAN.md` for detailed test strategy, scope, and case inventory.
